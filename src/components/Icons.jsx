@@ -15,3 +15,11 @@ export function PlusIcon({ className }) {
     </svg>
   )
 }
+
+export function ChevronIcon({ className }) {
+  return (
+    <svg className={`icon ${className ?? ''}`} viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 6 L15 12 L9 18" />
+    </svg>
+  )
+}
