@@ -87,10 +87,55 @@ button {
   position: sticky;
   top: var(--topbar-h);
   height: calc(100vh - var(--topbar-h));
-  padding: 20px 12px;
-  overflow-y: auto;
   background: var(--surface);
   border-right: 1px solid var(--border);
+}
+
+.sidenav-scroll {
+  height: 100%;
+  padding: 20px 12px;
+  overflow-y: auto;
+}
+
+.sidenav-resizer {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  z-index: 1;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.sidenav-resizer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 3px;
+  width: 2px;
+  background: transparent;
+  transition: background 0.15s;
+}
+
+.sidenav-resizer:hover::after,
+.sidenav-resizer:focus-visible::after,
+.sidenav-resizer.dragging::after {
+  background: var(--primary);
+}
+
+.sidenav-resizer:focus-visible {
+  outline: none;
+}
+
+.sidenav-resizer.dragging {
+  cursor: col-resize;
+}
+
+.layout:has(.sidenav-resizer.dragging) {
+  cursor: col-resize;
+  user-select: none;
 }
 
 .nav-group {
@@ -121,10 +166,14 @@ button {
 }
 
 .level-0 > .nav-toggle {
-  color: var(--muted);
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  gap: 8px;
+  padding: 10px 14px;
+  font-weight: 500;
+}
+
+.level-0 > .nav-toggle .chevron {
+  width: 16px;
+  height: 16px;
 }
 
 .chevron {
@@ -145,6 +194,81 @@ button {
   border-left: 1px solid var(--border);
 }
 
+.nav-search {
+  position: relative;
+  margin: 6px 0 4px;
+}
+
+.nav-search input {
+  width: 100%;
+  padding: 7px 30px 7px 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  text-overflow: ellipsis;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.nav-search input::placeholder {
+  color: var(--muted);
+  text-overflow: ellipsis;
+}
+
+.nav-search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.nav-search input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.nav-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.5;
+  color: var(--muted);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.nav-search-clear {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: flex;
+  padding: 4px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  transform: translateY(-50%);
+}
+
+.nav-search-clear:hover {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.nav-search-clear .icon {
+  width: 12px;
+  height: 12px;
+  stroke-width: 2.5;
+}
+
+.nav-empty {
+  margin: 8px 10px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 .nav-list {
   margin: 2px 0 0;
   padding: 0;
@@ -154,6 +278,13 @@ button {
 .nav-list .nav-item {
   padding: 6px 12px;
   font-size: 0.9rem;
+}
+
+.nav-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .nav-icon {
@@ -247,9 +378,68 @@ button {
   transition: background 0.15s, color 0.15s;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
   background: var(--primary);
   color: #fff;
+}
+
+.btn:disabled {
+  border-color: var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 4px;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.switch-track {
+  position: relative;
+  flex-shrink: 0;
+  width: 36px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--border);
+  transition: background 0.15s;
+}
+
+.switch-track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgba(31, 26, 28, 0.25);
+  transition: transform 0.15s;
+}
+
+.switch input:checked + .switch-track {
+  background: var(--primary);
+}
+
+.switch input:checked + .switch-track::after {
+  transform: translateX(16px);
+}
+
+.switch input:focus-visible + .switch-track {
+  box-shadow: 0 0 0 3px var(--primary-mid);
 }
 
 .card-header h2 {
@@ -315,8 +505,6 @@ button {
   overflow: auto;
 }
 
-/* Keep attribute headers and object labels visible while scrolling. The
-   surface-colored shadow fills the border-spacing gap so cells don't peek through. */
 .context-table thead th,
 .context-table tbody th {
   position: sticky;
@@ -325,7 +513,7 @@ button {
 }
 
 .context-table thead th {
-  top: 0;
+  top: 6px;
   z-index: 2;
 }
 
@@ -334,9 +522,13 @@ button {
   z-index: 1;
 }
 
+.context-table.at-top tbody th {
+  z-index: calc(var(--head-z) + 1);
+}
+
 .context-table thead th.corner {
   left: 0;
-  z-index: 3;
+  z-index: var(--head-z);
   background: var(--surface);
 }
 
@@ -417,26 +609,25 @@ button {
 
 .remove {
   position: absolute;
-  top: 3px;
-  right: 3px;
-  width: 18px;
-  height: 18px;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
   display: grid;
   place-items: center;
   padding: 0;
-  border: none;
+  border: 1px solid var(--primary);
   border-radius: 50%;
-  background: transparent;
+  background: var(--surface);
   color: var(--primary);
-  opacity: 0.5;
-  transition: opacity 0.15s, background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
 
 .remove:hover,
 .remove:focus-visible {
-  opacity: 1;
   background: var(--primary);
   color: #fff;
+  outline: none;
 }
 
 .cell {
@@ -461,6 +652,35 @@ button {
   transform: scale(0.94);
 }
 
+.cell-value {
+  width: 72px;
+  min-width: 64px;
+  max-width: 160px;
+  padding: 0 8px;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+@supports (field-sizing: content) {
+  .cell-value {
+    width: auto;
+    min-width: max(64px, 100%);
+    field-sizing: content;
+  }
+}
+
+.cell-value:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--surface);
+}
+
+.cell-value:active {
+  transform: none;
+}
+
 .cell.checked {
   border-color: var(--primary);
   background: var(--primary-soft);
@@ -481,9 +701,9 @@ button {
 }
 
 .remove .icon {
-  width: 10px;
-  height: 10px;
-  stroke-width: 3.5;
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.5;
 }
 
 .add .icon {
@@ -539,7 +759,7 @@ button:focus-visible {
     position: fixed;
     left: 0;
     z-index: 25;
-    width: var(--sidenav-w);
+    width: min(var(--sidenav-w), 85vw);
     transform: translateX(-100%);
     transition: transform 0.2s ease;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
@@ -547,6 +767,10 @@ button:focus-visible {
 
   .sidenav.open {
     transform: translateX(0);
+  }
+
+  .sidenav-resizer {
+    display: none;
   }
 
   .backdrop {
