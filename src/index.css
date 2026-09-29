@@ -194,6 +194,75 @@ button {
   border-left: 1px solid var(--border);
 }
 
+.nav-search {
+  position: relative;
+  margin: 6px 0 4px;
+}
+
+.nav-search input {
+  width: 100%;
+  padding: 7px 30px 7px 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.nav-search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.nav-search input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.nav-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.5;
+  color: var(--muted);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.nav-search-clear {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: flex;
+  padding: 4px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  transform: translateY(-50%);
+}
+
+.nav-search-clear:hover {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.nav-search-clear .icon {
+  width: 12px;
+  height: 12px;
+  stroke-width: 2.5;
+}
+
+.nav-empty {
+  margin: 8px 10px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 .nav-list {
   margin: 2px 0 0;
   padding: 0;

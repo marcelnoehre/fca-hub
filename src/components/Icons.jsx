@@ -23,3 +23,12 @@ export function ChevronIcon({ className }) {
     </svg>
   )
 }
+
+export function SearchIcon({ className }) {
+  return (
+    <svg className={`icon ${className ?? ''}`} viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="11" cy="11" r="6" />
+      <path d="M15.5 15.5 L20 20" />
+    </svg>
+  )
+}

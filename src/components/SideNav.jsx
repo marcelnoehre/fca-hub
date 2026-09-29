@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { categories } from '../data/contexts.js'
-import { ChevronIcon, PlusIcon } from './Icons.jsx'
+import { ChevronIcon, CrossIcon, PlusIcon, SearchIcon } from './Icons.jsx'
 
-function NavGroup({ label, level, defaultOpen = false, children }) {
-  const [open, setOpen] = useState(defaultOpen)
+function NavGroup({ label, level, defaultOpen = false, forceOpen = false, children }) {
+  const [expanded, setOpen] = useState(defaultOpen)
+  const open = forceOpen || expanded
 
   return (
     <div className={`nav-group level-${level}`}>
@@ -12,6 +13,27 @@ function NavGroup({ label, level, defaultOpen = false, children }) {
         <span>{label}</span>
       </button>
       {open && <div className="nav-children">{children}</div>}
+    </div>
+  )
+}
+
+function NavSearch({ query, onChange }) {
+  return (
+    <div className="nav-search">
+      <SearchIcon className="nav-search-icon" />
+      <input
+        type="search"
+        value={query}
+        onChange={(e) => onChange(e.target.value)}
+        onKeyDown={(e) => e.key === 'Escape' && onChange('')}
+        placeholder="Search contexts"
+        aria-label="Search contexts"
+      />
+      {query && (
+        <button className="nav-search-clear" onClick={() => onChange('')} aria-label="Clear search">
+          <CrossIcon />
+        </button>
+      )}
     </div>
   )
 }
@@ -66,6 +88,17 @@ function Resizer({ width, onResize }) {
 }
 
 function SideNav({ open, selected, onSelect, width, onResize }) {
+  const [query, setQuery] = useState('')
+  const needle = query.trim().toLowerCase()
+  const filtered = needle
+    ? categories
+        .map((category) => ({
+          ...category,
+          files: category.files.filter((file) => file.name.toLowerCase().includes(needle)),
+        }))
+        .filter((category) => category.files.length > 0)
+    : categories
+
   return (
     <nav className={`sidenav${open ? ' open' : ''}`}>
       <div className="sidenav-scroll">
@@ -79,8 +112,15 @@ function SideNav({ open, selected, onSelect, width, onResize }) {
         </button>
 
         <NavGroup label="Formal Contexts" level={0}>
-          {categories.map((category) => (
-            <NavGroup key={category.name} label={category.name} level={1}>
+          <NavSearch query={query} onChange={setQuery} />
+          {needle && filtered.length === 0 && <p className="nav-empty">No matching contexts</p>}
+          {filtered.map((category) => (
+            <NavGroup
+              key={category.name}
+              label={category.name}
+              level={1}
+              forceOpen={needle !== ''}
+            >
               <ul className="nav-list">
                 {category.files.map((file) => {
                   const active = selected?.path === file.path
