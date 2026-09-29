@@ -208,7 +208,13 @@ button {
   color: var(--text);
   font: inherit;
   font-size: 0.9rem;
+  text-overflow: ellipsis;
   transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.nav-search input::placeholder {
+  color: var(--muted);
+  text-overflow: ellipsis;
 }
 
 .nav-search input::-webkit-search-cancel-button {
@@ -440,8 +446,6 @@ button {
   overflow: auto;
 }
 
-/* Keep attribute headers and object labels visible while scrolling. The
-   surface-colored shadow fills the border-spacing gap so cells don't peek through. */
 .context-table thead th,
 .context-table tbody th {
   position: sticky;
@@ -450,7 +454,7 @@ button {
 }
 
 .context-table thead th {
-  top: 0;
+  top: 6px;
   z-index: 2;
 }
 
@@ -459,9 +463,13 @@ button {
   z-index: 1;
 }
 
+.context-table.at-top tbody th {
+  z-index: calc(var(--head-z) + 1);
+}
+
 .context-table thead th.corner {
   left: 0;
-  z-index: 3;
+  z-index: var(--head-z);
   background: var(--surface);
 }
 
@@ -542,26 +550,25 @@ button {
 
 .remove {
   position: absolute;
-  top: 3px;
-  right: 3px;
-  width: 18px;
-  height: 18px;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
   display: grid;
   place-items: center;
   padding: 0;
-  border: none;
+  border: 1px solid var(--primary);
   border-radius: 50%;
-  background: transparent;
+  background: var(--surface);
   color: var(--primary);
-  opacity: 0.5;
-  transition: opacity 0.15s, background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
 
 .remove:hover,
 .remove:focus-visible {
-  opacity: 1;
   background: var(--primary);
   color: #fff;
+  outline: none;
 }
 
 .cell {
@@ -606,9 +613,9 @@ button {
 }
 
 .remove .icon {
-  width: 10px;
-  height: 10px;
-  stroke-width: 3.5;
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.5;
 }
 
 .add .icon {

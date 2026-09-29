@@ -37,7 +37,7 @@ function App() {
     try {
       localStorage.setItem(NAV_WIDTH_KEY, String(navWidth))
     } catch {
-      // storage unavailable; width just won't persist
+      return
     }
   }, [navWidth])
 

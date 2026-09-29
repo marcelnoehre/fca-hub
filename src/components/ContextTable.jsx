@@ -34,6 +34,7 @@ function ContextTable({ initialContext }) {
   )
   const [incidence, setIncidence] = useState(() => new Set(initialContext?.incidence))
   const [title, setTitle] = useState(initialContext?.name ?? null)
+  const [atTop, setAtTop] = useState(true)
 
   const key = (g, m) => `${g}:${m}`
 
@@ -107,13 +108,20 @@ function ContextTable({ initialContext }) {
         </div>
       </div>
 
-      <div className="table-scroll">
-        <table className="context-table">
+      <div className="table-scroll" onScroll={(e) => setAtTop(e.currentTarget.scrollTop === 0)}>
+        <table
+          className={`context-table${atTop ? ' at-top' : ''}`}
+          style={{ '--head-z': attributes.length + 3 }}
+        >
           <thead>
             <tr>
               <th className="corner" />
-              {attributes.map((m) => (
-                <th key={m.id} className="label attribute">
+              {attributes.map((m, i) => (
+                <th
+                  key={m.id}
+                  className="label attribute"
+                  style={{ zIndex: attributes.length + 2 - i }}
+                >
                   <EditableLabel
                     name={m.name}
                     onRename={(name) => renameItem(setAttributes, m.id, name)}
