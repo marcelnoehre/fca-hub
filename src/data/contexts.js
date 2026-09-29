@@ -10,12 +10,16 @@ const byName = (a, b) => a.name.localeCompare(b.name, undefined, { numeric: true
 export const categories = Object.entries(
   Object.keys(loaders).reduce((groups, path) => {
     const [, category, name, format] = path.match(/\/contexts\/([^/]+)\/([^/]+)\.(cxt|csv)$/)
-    ;(groups[category] ??= []).push({ path, category, name, format })
+    ;(groups[category] ??= []).push({ id: `${category}/${name}`, path, category, name, format })
     return groups
   }, {}),
 )
   .map(([name, files]) => ({ name, files: files.sort(byName) }))
   .sort(byName)
+
+const filesById = new Map(categories.flatMap((category) => category.files).map((file) => [file.id, file]))
+
+export const findContext = (id) => filesById.get(id) ?? null
 
 export async function loadContext(file) {
   const text = await loaders[file.path]()

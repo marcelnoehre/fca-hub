@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import TopBar from './components/TopBar.jsx'
 import SideNav from './components/SideNav.jsx'
 import ContextTable from './components/ContextTable.jsx'
-import { loadContext } from './data/contexts.js'
+import { findContext, loadContext } from './data/contexts.js'
 
 const NAV_WIDTH_KEY = 'fca-hub.sidenav-width'
 const NAV_WIDTH_DEFAULT = 240
@@ -16,11 +16,37 @@ function readNavWidth() {
   }
 }
 
+const CONTEXT_PARAM = 'context'
+
+function readSelected() {
+  const id = new URLSearchParams(window.location.search).get(CONTEXT_PARAM)
+  return id ? findContext(id) : null
+}
+
+function writeSelected(file) {
+  const url = new URL(window.location.href)
+  if (file) url.searchParams.set(CONTEXT_PARAM, file.id)
+  else url.searchParams.delete(CONTEXT_PARAM)
+  if (url.href !== window.location.href) window.history.pushState(null, '', url)
+}
+
 function App() {
   const [navOpen, setNavOpen] = useState(false)
   const [navWidth, setNavWidth] = useState(readNavWidth)
-  const [selected, setSelected] = useState(null)
+  const [selected, setSelected] = useState(readSelected)
   const [loaded, setLoaded] = useState({ path: null, context: null, error: null })
+  const [revision, setRevision] = useState(0)
+
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    if (url.searchParams.has(CONTEXT_PARAM) && !readSelected()) {
+      url.searchParams.delete(CONTEXT_PARAM)
+      window.history.replaceState(null, '', url)
+    }
+    const onPopState = () => setSelected(readSelected())
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
 
   useEffect(() => {
     if (!selected) return
@@ -42,12 +68,17 @@ function App() {
   }, [navWidth])
 
   const select = (file) => {
-    setSelected(file)
     setNavOpen(false)
+    if (file?.path === selected?.path) {
+      setRevision((r) => r + 1)
+    } else {
+      setSelected(file)
+      writeSelected(file)
+    }
   }
 
   const renderContent = () => {
-    if (!selected) return <ContextTable key="new" />
+    if (!selected) return <ContextTable key={`new:${revision}`} />
     if (loaded.path !== selected.path) return <p className="status">Loading {selected.name}…</p>
     if (loaded.error) {
       return (
@@ -56,7 +87,13 @@ function App() {
         </p>
       )
     }
-    return <ContextTable key={selected.path} initialContext={loaded.context} />
+    return (
+      <ContextTable
+        key={`${selected.path}:${revision}`}
+        initialContext={loaded.context}
+       
+      />
+    )
   }
 
   return (
