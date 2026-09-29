@@ -4,8 +4,21 @@ import SideNav from './components/SideNav.jsx'
 import ContextTable from './components/ContextTable.jsx'
 import { loadContext } from './data/contexts.js'
 
+const NAV_WIDTH_KEY = 'fca-hub.sidenav-width'
+const NAV_WIDTH_DEFAULT = 240
+
+function readNavWidth() {
+  try {
+    const stored = Number(localStorage.getItem(NAV_WIDTH_KEY))
+    return stored > 0 ? stored : NAV_WIDTH_DEFAULT
+  } catch {
+    return NAV_WIDTH_DEFAULT
+  }
+}
+
 function App() {
   const [navOpen, setNavOpen] = useState(false)
+  const [navWidth, setNavWidth] = useState(readNavWidth)
   const [selected, setSelected] = useState(null)
   const [loaded, setLoaded] = useState({ path: null, context: null, error: null })
 
@@ -19,6 +32,14 @@ function App() {
       cancelled = true
     }
   }, [selected])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(NAV_WIDTH_KEY, String(navWidth))
+    } catch {
+      // storage unavailable; width just won't persist
+    }
+  }, [navWidth])
 
   const select = (file) => {
     setSelected(file)
@@ -39,9 +60,15 @@ function App() {
   }
 
   return (
-    <div className="layout">
+    <div className="layout" style={{ '--sidenav-w': `${navWidth}px` }}>
       <TopBar onMenuClick={() => setNavOpen((open) => !open)} />
-      <SideNav open={navOpen} selected={selected} onSelect={select} />
+      <SideNav
+        open={navOpen}
+        selected={selected}
+        onSelect={select}
+        width={navWidth}
+        onResize={setNavWidth}
+      />
       {navOpen && <div className="backdrop" onClick={() => setNavOpen(false)} />}
       <main className="content">{renderContent()}</main>
     </div>
