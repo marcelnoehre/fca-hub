@@ -3,6 +3,7 @@
   --primary-dark: rgb(160, 12, 74);
   --primary-soft: rgba(199, 16, 92, 0.08);
   --primary-mid: rgba(199, 16, 92, 0.25);
+  --primary-soft-solid: rgb(251, 236, 242);
   --bg: #faf7f8;
   --surface: #ffffff;
   --text: #1f1a1c;
@@ -87,22 +88,85 @@ button {
   top: var(--topbar-h);
   height: calc(100vh - var(--topbar-h));
   padding: 20px 12px;
+  overflow-y: auto;
   background: var(--surface);
   border-right: 1px solid var(--border);
 }
 
-.nav-section {
-  margin: 0 0 8px;
-  padding: 0 14px;
+.nav-group {
+  margin-top: 4px;
+}
+
+.nav-group.level-0 {
+  margin-top: 16px;
+}
+
+.nav-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font-weight: 600;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.nav-toggle:hover {
+  background: var(--primary-soft);
+}
+
+.level-0 > .nav-toggle {
   color: var(--muted);
   font-size: 0.75rem;
-  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
+.chevron {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.5;
+  transition: transform 0.15s;
+}
+
+.chevron.open {
+  transform: rotate(90deg);
+}
+
+.nav-children {
+  margin-left: 16px;
+  padding-left: 6px;
+  border-left: 1px solid var(--border);
+}
+
+.nav-list {
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-list .nav-item {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+}
+
+.nav-icon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.5;
+}
+
 .nav-item {
   width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 14px;
   border: none;
   border-radius: 8px;
@@ -127,10 +191,22 @@ button {
   display: none;
 }
 
+.status {
+  color: var(--muted);
+}
+
+.status.error {
+  color: var(--primary);
+}
+
 .content {
   grid-area: main;
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - var(--topbar-h));
   padding: 32px;
   min-width: 0;
+  overflow: hidden;
 }
 
 .card {
@@ -139,6 +215,10 @@ button {
   border-radius: var(--radius);
   box-shadow: 0 4px 24px rgba(31, 26, 28, 0.05);
   padding: 24px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 100%;
 }
 
 .card-header {
@@ -230,7 +310,38 @@ button {
 }
 
 .table-scroll {
-  overflow-x: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Keep attribute headers and object labels visible while scrolling. The
+   surface-colored shadow fills the border-spacing gap so cells don't peek through. */
+.context-table thead th,
+.context-table tbody th {
+  position: sticky;
+  background-clip: padding-box;
+  box-shadow: 0 0 0 6px var(--surface);
+}
+
+.context-table thead th {
+  top: 0;
+  z-index: 2;
+}
+
+.context-table tbody th {
+  left: 0;
+  z-index: 1;
+}
+
+.context-table thead th.corner {
+  left: 0;
+  z-index: 3;
+  background: var(--surface);
+}
+
+.context-table th.add-cell {
+  background: var(--surface);
 }
 
 .context-table {
@@ -250,7 +361,7 @@ button {
   height: 44px;
   padding: 0 20px;
   border-radius: 8px;
-  background: var(--primary-soft);
+  background: var(--primary-soft-solid);
   color: var(--primary);
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 500;

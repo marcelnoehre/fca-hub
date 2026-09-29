@@ -25,11 +25,15 @@ const formatTitle = (name) => (
   </>
 )
 
-function ContextTable() {
-  const [objects, setObjects] = useState(() => createItems('g', INITIAL_SIZE))
-  const [attributes, setAttributes] = useState(() => createItems('m', INITIAL_SIZE))
-  const [incidence, setIncidence] = useState(() => new Set())
-  const [title, setTitle] = useState(null)
+function ContextTable({ initialContext }) {
+  const [objects, setObjects] = useState(
+    () => initialContext?.objects ?? createItems('g', INITIAL_SIZE),
+  )
+  const [attributes, setAttributes] = useState(
+    () => initialContext?.attributes ?? createItems('m', INITIAL_SIZE),
+  )
+  const [incidence, setIncidence] = useState(() => new Set(initialContext?.incidence))
+  const [title, setTitle] = useState(initialContext?.name ?? null)
 
   const key = (g, m) => `${g}:${m}`
 
