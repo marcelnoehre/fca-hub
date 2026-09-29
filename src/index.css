@@ -378,9 +378,68 @@ button {
   transition: background 0.15s, color 0.15s;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
   background: var(--primary);
   color: #fff;
+}
+
+.btn:disabled {
+  border-color: var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 4px;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.switch-track {
+  position: relative;
+  flex-shrink: 0;
+  width: 36px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--border);
+  transition: background 0.15s;
+}
+
+.switch-track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgba(31, 26, 28, 0.25);
+  transition: transform 0.15s;
+}
+
+.switch input:checked + .switch-track {
+  background: var(--primary);
+}
+
+.switch input:checked + .switch-track::after {
+  transform: translateX(16px);
+}
+
+.switch input:focus-visible + .switch-track {
+  box-shadow: 0 0 0 3px var(--primary-mid);
 }
 
 .card-header h2 {
@@ -591,6 +650,35 @@ button {
 
 .cell:active {
   transform: scale(0.94);
+}
+
+.cell-value {
+  width: 72px;
+  min-width: 64px;
+  max-width: 160px;
+  padding: 0 8px;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+@supports (field-sizing: content) {
+  .cell-value {
+    width: auto;
+    min-width: max(64px, 100%);
+    field-sizing: content;
+  }
+}
+
+.cell-value:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--surface);
+}
+
+.cell-value:active {
+  transform: none;
 }
 
 .cell.checked {

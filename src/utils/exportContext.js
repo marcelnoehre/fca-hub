@@ -1,3 +1,5 @@
+import { CSV_SEPARATOR } from './parseCsv.js'
+
 export function toCxt(objects, attributes, has) {
   const lines = [
     'B',
@@ -13,12 +15,12 @@ export function toCxt(objects, attributes, has) {
 }
 
 const csvEscape = (value) =>
-  /[",\n\r]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value
+  /[";\n\r]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value
 
-export function toCsv(objects, attributes, has) {
+export function toCsv(objects, attributes, valueOf) {
   const header = ['', ...attributes.map((m) => m.name)]
-  const rows = objects.map((g) => [g.name, ...attributes.map((m) => (has(g, m) ? '1' : '0'))])
-  return [header, ...rows].map((row) => row.map(csvEscape).join(',')).join('\n') + '\n'
+  const rows = objects.map((g) => [g.name, ...attributes.map((m) => valueOf(g, m))])
+  return [header, ...rows].map((row) => row.map(csvEscape).join(CSV_SEPARATOR)).join('\n') + '\n'
 }
 
 export function downloadFile(content, filename, type) {
